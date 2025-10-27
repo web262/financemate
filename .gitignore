@@ -9,6 +9,8 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+pnpm-lock.yaml
+yarn.lock
 
 # testing
 /coverage
@@ -16,6 +18,9 @@
 # next.js
 /.next/
 /out/
+.next-static/
+dist/
+
 
 # production
 /build
@@ -39,3 +44,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# editor/OS
+.DS_Store
+Thumbs.db
+*.log
