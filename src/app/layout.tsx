@@ -1,10 +1,8 @@
-// src/app/layout.tsx
-import './globals.css';
-import Link from 'next/link';
-import { Inter } from 'next/font/google';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import SignOut from '@/components/SignOut'; // Import SignOut component
+import Link from 'next/link';
+import './globals.css';
+import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,14 +14,14 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
 
+  // Check user session
   useEffect(() => {
-    // Check if user is authenticated
-    const session = supabase.auth.getSession();
-    setUser(session?.user ?? null);
+    const session = supabase.auth.session();
+    setUser(session?.user || null);
 
-    // Monitor auth state changes
-    supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
+    // Listen to auth state change
+    supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user || null);
     });
   }, []);
 
@@ -39,15 +37,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/dashboard" className="hover:text-sky-700">Dashboard</Link>
               <Link href="/transactions" className="hover:text-sky-700">Transactions</Link>
               <Link href="/goals" className="hover:text-sky-700">Goals</Link>
-
-              {/* Render SignIn/SignOut buttons based on user authentication state */}
               {user ? (
-                <>
-                  <span className="mr-4">Hello, {user.email}</span>
-                  <SignOut /> {/* SignOut button */}
-                </>
+                <button
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    setUser(null);
+                  }}
+                  className="btn-ghost"
+                >
+                  Sign Out
+                </button>
               ) : (
-                <Link href="/signin" className="btn-ghost">Sign in</Link> {/* SignIn button */}
+                <Link href="/signin" className="btn-ghost">Sign In</Link>
               )}
             </nav>
           </div>
