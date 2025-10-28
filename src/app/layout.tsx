@@ -2,6 +2,9 @@
 import './globals.css';
 import Link from 'next/link';
 import { Inter } from 'next/font/google';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import SignOut from '@/components/SignOut'; // Import SignOut component
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,6 +14,19 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const session = supabase.auth.getSession();
+    setUser(session?.user ?? null);
+
+    // Monitor auth state changes
+    supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+  }, []);
+
   return (
     <html lang="en" className={inter.className}>
       <body className="text-slate-900">
@@ -23,7 +39,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/dashboard" className="hover:text-sky-700">Dashboard</Link>
               <Link href="/transactions" className="hover:text-sky-700">Transactions</Link>
               <Link href="/goals" className="hover:text-sky-700">Goals</Link>
-              <Link href="/signin" className="btn-ghost">Sign in</Link>
+
+              {/* Render SignIn/SignOut buttons based on user authentication state */}
+              {user ? (
+                <>
+                  <span className="mr-4">Hello, {user.email}</span>
+                  <SignOut /> {/* SignOut button */}
+                </>
+              ) : (
+                <Link href="/signin" className="btn-ghost">Sign in</Link> {/* SignIn button */}
+              )}
             </nav>
           </div>
         </header>
