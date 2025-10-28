@@ -157,7 +157,7 @@ export default function Dashboard() {
       const spent = catSpendMap.get(b.category) ?? 0;
       if (b.limit_amount > 0) {
         const pct = Math.round((spent / b.limit_amount) * 100);
-        if (pct >= 100) msgs.push(`${b.category}: ${pct}% (over)`);
+        if (pct >= 100) msgs.push(`${b.category}: ${pct}% (over)`); 
         else if (pct >= 80) msgs.push(`${b.category}: ${pct}%`);
       }
     }
@@ -184,7 +184,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Budget banners */}
+      {/* Budget warnings */}
       {budgetWarnings.length > 0 && (
         <div className="mb-6 border border-amber-300/30 bg-amber-900/30 text-amber-200 rounded-xl p-3 text-sm">
           Budget warnings: {budgetWarnings.join(' • ')}. See{' '}
