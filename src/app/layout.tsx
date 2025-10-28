@@ -1,3 +1,5 @@
+// src/app/layout.tsx
+
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
@@ -37,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/dashboard" className="hover:text-sky-700">Dashboard</Link>
               <Link href="/transactions" className="hover:text-sky-700">Transactions</Link>
               <Link href="/goals" className="hover:text-sky-700">Goals</Link>
+              {/* Conditionally render Sign In / Sign Out based on user session */}
               {user ? (
                 <button
                   onClick={async () => {
