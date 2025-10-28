@@ -1,4 +1,4 @@
-// src/app/layout.tsx
+'use client';
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -22,9 +22,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     setUser(session?.user || null);
 
     // Listen to auth state change
-    supabase.auth.onAuthStateChange((_, session) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user || null);
     });
+
+    return () => {
+      authListener?.unsubscribe(); // Clean up listener when the component is unmounted
+    };
   }, []);
 
   return (
@@ -39,12 +43,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/dashboard" className="hover:text-sky-700">Dashboard</Link>
               <Link href="/transactions" className="hover:text-sky-700">Transactions</Link>
               <Link href="/goals" className="hover:text-sky-700">Goals</Link>
-              {/* Conditionally render Sign In / Sign Out based on user session */}
               {user ? (
                 <button
                   onClick={async () => {
                     await supabase.auth.signOut();
-                    setUser(null);
+                    setUser(null); // Clear user state
+                    window.location.reload(); // Force reload for sign-out
                   }}
                   className="btn-ghost"
                 >
